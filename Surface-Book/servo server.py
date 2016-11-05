@@ -35,11 +35,12 @@ try:
         except IOError:
             print('bad data')
             continue
-        port.write((str(data) + ';').encode('utf-8'))
+        for i in range(0,5):
+            port.write((str(int(data/10)*10 + i) + ';').encode('utf-8'))
+            time.sleep(.0005);
         #time.sleep(.5)
         #print(port.read(port.in_waiting))
-        print(str(data) + '\t at ' + str(1/(time.time()-start)) + ' hz')      
-        
+        print(str(str(int(data/10)*10)) + '\t at ' + str(1/(time.time()-start)) + ' hz')      
 finally:
     port.flush()
     port.close()

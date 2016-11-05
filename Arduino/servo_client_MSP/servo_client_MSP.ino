@@ -1,10 +1,12 @@
 #include <Servo.h>
 
-Servo servo1;
+Servo servos[5];
 
-static const int analogpins[] = {A3, A4, A5, A6, A7};
-int minBend = 300;
-int maxBend = 700;
+static const int POWER_PIN = P1_0;
+static const int PINS[] = {P2_3, P2_4, P2_5, P1_6, P1_7};
+
+int minBend = 30;
+int maxBend = 70;
 
 int power(int x, int y) {
   int total = 1;
@@ -25,14 +27,16 @@ void sendSerialError() {
 }
 
 int getData() {
+  //Serial.println("Getting");
+  digitalWrite(POWER_PIN, LOW);
   delay(5);
   unsigned long start = millis();
-  int vals[5];
+  int vals[6];
   int val = Serial.read();
   int count = 0;
   while (int(val) != 59) {
     //Serial.print(val);
-    if (millis() > start + 1000 || count > 4) {
+    if (millis() > start + 1000 || count > 5) {
       return -1;
     }
     //Serial.println(val);
@@ -43,58 +47,37 @@ int getData() {
   //Serial.println("count" + String(count));
   int intVal = 0;
   for (int i = 0; i < count; i++) {
+    //Serial.println(intVal);
     //Serial.println(vals[i]);
     intVal += vals[i] * power(10, (count - i));
   }
   //Serial.flush();
-  //digitalWrite(P1_0,HIGH);
+  //digitalWrite(P1_0, HIGH);
+  //Serial.println("Done Getting");
+  //Serial.println(intVal / 10);
+  digitalWrite(POWER_PIN, HIGH);
   return intVal / 10;
 }
 
 void setup() {
   Serial.begin(9600);
   //Serial.println(int('0'));
-  pinMode(P1_0,OUTPUT);
-  servo1.attach(P2_3);
-  servo1.write(90);
+  pinMode(POWER_PIN ,OUTPUT);
+  digitalWrite(POWER_PIN, HIGH);
+  int i;
+  for (i = 0; i < (sizeof(servos) / sizeof(Servo)); i++) {
+    servos[i].attach(PINS[i]);
+    servos[i].write(90);
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly: 
   if (Serial.available() > 0) {
-    /*int message[] = {-1, -1, -1, -1};
-    int lastRead = Serial.read();
-    int readCount = 1;
-    unsigned long start = millis();
-    while (lastRead != 59) {
-      message[readCount - 1] = lastRead;
-      while (Serial.available() == 0) {
-        if (millis() > start + 1000) {
-          sendSerialError();
-          return;
-        }
-      }
-      lastRead = Serial.read();
-      if (lastRead == 59) {
-        break;
-      }
-      readCount++;
-      if (readCount > 5) {
-        sendSerialError();
-        return;
-      }
-    }
-    //Serial.println(command);
-    
-    Serial.println("");*/
     int data = getData();
-    //Serial.println(data);
-    //delay(50);
-    //int val = Serial.read();
-    //Serial.println(val);
-    //Serial.flush();
-    //Serial.println(
-    servo1.write(bendToAngle(data));
+    int pin = data % 10;
+    int pos = data / 10;
+    servos[pin].write(bendToAngle(pos));
   }
   delay(10);
 }
