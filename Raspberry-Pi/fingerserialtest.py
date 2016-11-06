@@ -21,7 +21,7 @@ def wait_for_key():
 
 def get_data(pin=0):
     port.write(str(pin).encode('utf-8'))
-    time.sleep(.001)
+    time.sleep(.0005)
     start = time.time()
     #while port.peek() == b'\x00':
     #    port.flush()
@@ -51,33 +51,24 @@ def get_reading():
     avg = sum(readings) / len(readings)
     return int(avg + .5)
 
-'''
-print('Fully bend finger. Press Enter when ready.')
-wait_for_key()
-maxvals = []
-start = time.time()
-while time.time() < start + 1:
-    maxvals += [get_data()]
-max_bend = int(sum(maxvals) / len(maxvals) + .5)
-
-print('Fully extend finger. Press Enter when ready.')
-wait_for_key()
-minvals = []
-start = time.time()
-while time.time() < start + 1:
-    minvals += [get_data()]
-min_bend = int(sum(minvals) / len(minvals) + .5)
-print(max_bend)
-print(min_bend)
-'''
 try:
     while True:
         #print(get_data())
         while bt.inWaiting() == 0:
-            time.sleep(.01)
+            time.sleep(.0001)
+        start = time.time();
         pin = int(bt.read())
-        data = get_data(pin)
-        bt.write((str(data)+';').encode('utf-8'))
+        #data = int(get_data(pin) / 10)
+        #print(str(1/(time.time()-start))+'\thz')
+        datas = []
+        for i in range(0, 5):
+            datas += [int(get_data(i) / 10)]
+        strsend = ""
+        for i in range(0, 4):
+            strsend += str(datas[i]) + ';'
+        strsend += str(datas[-1])
+        bt.write((strsend + ';').encode('utf-8'))
+        #bt.write((str(data)+';').encode('utf-8'))
 finally:
     bt.close()
     port.close()
