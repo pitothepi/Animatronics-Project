@@ -79,5 +79,5 @@ void loop() {
     int pos = data / 10;
     servos[pin].write(bendToAngle(pos));
   }
-  delay(10);
+  delay(5);
 }

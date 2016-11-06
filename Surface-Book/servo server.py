@@ -5,7 +5,7 @@ MSP_PORT = 'COM4'
 BT_PORT = 'COM10'
 
 def read_serial(port):
-    time.sleep(.005)
+    time.sleep(.0005)
     start = time.time()
     val = []
     val += [port.read()]
@@ -26,21 +26,24 @@ time.sleep(5)
 hzs = []
 try:
     while 1:
+        bt.write(str(0).encode('utf-8'))
         start = time.time()
-        bt.write('0'.encode('utf-8'))
-        #data = port.read(port.in_waiting)
-        #data = read_serial(bt)
-        try:
-            data = read_serial(bt)
-        except IOError:
-            print('bad data')
-            continue
-        for i in range(0,5):
-            port.write((str(int(data/10)*10 + i) + ';').encode('utf-8'))
+        #datas = []
+        for i in range(0, 5):
+            #start = time.time()
+            
+            #data = port.read(port.in_waiting)
+            #data = read_serial(bt)
+            try:
+                data = read_serial(bt)
+            except IOError:
+                print('bad data')
+                continue
+            port.write((str(data*10 + i) + ';').encode('utf-8'))
             time.sleep(.0005);
-        #time.sleep(.5)
-        #print(port.read(port.in_waiting))
-        print(str(str(int(data/10)*10)) + '\t at ' + str(1/(time.time()-start)) + ' hz')      
+            #time.sleep(.5)
+            #print(port.read(port.in_waiting))
+        print(str(1/(time.time()-start)) + ' hz')      
 finally:
     port.flush()
     port.close()
