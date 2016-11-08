@@ -40,7 +40,7 @@ def get_data(pin=0):
     int_val = 0
     for i in range(0, end):
         int_val += int(val[i]) * 10 ** (end - (i + 1))
-    bt.flush()
+    #bt.flush()
     return int_val
 
 def get_reading():
