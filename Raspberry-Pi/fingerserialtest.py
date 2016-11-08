@@ -31,7 +31,7 @@ def get_data(pin=0):
         val = []
         val += [port.read()]
     while val[-1] != b'\n':
-        print(val)
+        #print(val)
         if time.time() > start + 1:
             raise IOError('Incorrect serial data.')
         val += [port.read()]
@@ -49,14 +49,15 @@ def get_reading():
     avg = sum(readings) / len(readings)
     return int(avg + .5)
 
-sock = socket.socket(AF_INET, SOCK_DGRAM)
-sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  #John 11:35
 
 try:
     while True:
         for pin in range(0,5):
-            data = int(get_data(pin) / 10) + pin
-            sock.sendto(str(data).encode('utf-8'), ('255.255.255.255', 1337))
+            data = int(get_data(pin) / 10) * 10 + pin
+            print(data)
+            sock.sendto((str(data) + ';').encode('utf-8'), ('255.255.255.255', 1337))
             time.sleep(.001)
 finally:
     sock.sendto('q'.encode('utf-8'), ('255.255.255.255', 1337))
