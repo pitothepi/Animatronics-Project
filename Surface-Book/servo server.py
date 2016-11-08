@@ -1,8 +1,8 @@
 import serial
 import time
+import socket
 
 MSP_PORT = 'COM4'
-BT_PORT = 'COM10'
 
 def read_serial(port):
     time.sleep(.0005)
@@ -21,30 +21,23 @@ def read_serial(port):
     return int_val
 
 port = serial.Serial(MSP_PORT, baudrate=9600, timeout=1)
-bt = serial.Serial(BT_PORT, baudrate=115200, timeout=1)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((' ',1337))
 time.sleep(5)
 hzs = []
 try:
     while 1:
-        bt.write(str(0).encode('utf-8'))
         start = time.time()
-        #datas = []
-        for i in range(0, 5):
-            #start = time.time()
-            
-            #data = port.read(port.in_waiting)
-            #data = read_serial(bt)
-            try:
-                data = read_serial(bt)
-            except IOError:
-                print('bad data')
-                continue
-            port.write((str(data*10 + i) + ';').encode('utf-8'))
-            time.sleep(.0005);
-            #time.sleep(.5)
-            #print(port.read(port.in_waiting))
-        print(str(1/(time.time()-start)) + ' hz')      
+        m = sock.recvfrom(1024)
+        if m[0] == b'q':
+            raise KeyboardInterrupt
+        port.write(m[0])
+        try:
+            print(m[0].decode('utf-8') + '\t' + str(1/(time.time()-start)) + ' hz')      
+        except ZeroDivisionError:
+            print(m[0].decode('utf-8') + '\tfast hz')
 finally:
     port.flush()
     port.close()
+    sock.close()
     print('Serial closed.')
