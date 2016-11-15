@@ -22,7 +22,7 @@ def read_serial(port):
 
 port = serial.Serial(MSP_PORT, baudrate=9600, timeout=1)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((' ',1337))
+sock.bind(('',1337))
 time.sleep(5)
 hzs = []
 try:
