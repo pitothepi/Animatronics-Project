@@ -5,8 +5,8 @@ Servo servos[5];
 static const int POWER_PIN = P1_0;
 static const int PINS[] = {P2_3, P2_4, P2_5, P1_6, P1_7};
 
-int minBend = 30;
-int maxBend = 70;
+int minBend[] = {30,40,38,30,30};
+int maxBend[] = {55,64,68,50,70};
 
 int power(int x, int y) {
   int total = 1;
@@ -16,8 +16,8 @@ int power(int x, int y) {
   return total;
 }
 
-int bendToAngle(int bend) {
-  return 180 - int(float(bend - minBend) / (maxBend - minBend) * 180 + .5);
+int bendToAngle(int bend, int pin) {
+  return 180 - int(float(bend - minBend[pin]) / (maxBend[pin] - minBend[pin]) * 180 + .5);
 }
 
 void sendSerialError() {
@@ -77,7 +77,7 @@ void loop() {
     int data = getData();
     int pin = data % 10;
     int pos = data / 10;
-    servos[pin].write(bendToAngle(pos));
+    servos[pin].write(bendToAngle(pos, pin));
   }
   delay(5);
 }
