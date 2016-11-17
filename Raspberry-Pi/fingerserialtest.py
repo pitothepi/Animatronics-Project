@@ -58,7 +58,7 @@ try:
             data = int(get_data(pin) / 10) * 10 + pin
             print(data)
             sock.sendto((str(data) + ';').encode('utf-8'), ('255.255.255.255', 1337))
-            time.sleep(.001)
+            time.sleep(.002)
 finally:
     sock.sendto('q'.encode('utf-8'), ('255.255.255.255', 1337))
     sock.close()
