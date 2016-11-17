@@ -2,11 +2,13 @@
 
 Servo servos[5];
 
-static const int POWER_PIN = P1_0;
-static const int PINS[] = {P2_3, P2_4, P2_5, P1_6, P1_7};
+//static const int POWER_PIN = P1_0;
+//static const int PINS[] = {P2_3, P2_4, P2_5, P1_6, P1_7};
+static const int POWER_PIN = 13;
+static const int PINS[] = {2,3,4,5,6};
 
-int minBend[] = {30,40,38,30,30};
-int maxBend[] = {55,64,68,50,70};
+int minBend[] = {30, 40, 68, 30, 30};
+int maxBend[] = {55, 64, 38, 50, 70};
 
 int power(int x, int y) {
   int total = 1;
@@ -62,7 +64,7 @@ int getData() {
 void setup() {
   Serial.begin(9600);
   //Serial.println(int('0'));
-  pinMode(POWER_PIN ,OUTPUT);
+  pinMode(POWER_PIN , OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
   int i;
   for (i = 0; i < (sizeof(servos) / sizeof(Servo)); i++) {
@@ -72,7 +74,7 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly: 
+  // put your main code here, to run repeatedly:
   if (Serial.available() > 0) {
     int data = getData();
     int pin = data % 10;
