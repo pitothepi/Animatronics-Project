@@ -2,8 +2,7 @@ import serial
 import time
 import socket
 
-MSP_PORT = 'COM4'
-
+MSP_PORT = 'COM11'
 def read_serial(port):
     time.sleep(.0005)
     start = time.time()
@@ -32,12 +31,12 @@ try:
         if m[0] == b'q':
             raise KeyboardInterrupt
         port.write(m[0])
+        time.sleep(.0005)
         try:
             print(m[0].decode('utf-8') + '\t' + str(1/(time.time()-start)) + ' hz')      
         except ZeroDivisionError:
             print(m[0].decode('utf-8') + '\tfast hz')
 finally:
-    port.flush()
     port.close()
     sock.close()
     print('Serial closed.')
