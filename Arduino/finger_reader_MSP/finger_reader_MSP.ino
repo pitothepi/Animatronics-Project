@@ -5,10 +5,8 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly: 
   if (Serial.available() > 0) {
     int command = Serial.read();
-    //Serial.println(command);
     int reading = analogRead(analogpins[command-48]);
     Serial.println(reading);
   }
